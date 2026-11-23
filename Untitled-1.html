@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Modern Barista: Interactive Multimedia E-Book</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- Tone.js for Spatial Audio & Sensory Cues -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        espresso: {
+                            50: '#fdf8f6',
+                            100: '#f2e8e5',
+                            200: '#eaddd7',
+                            300: '#e0cec7',
+                            400: '#d2bab0',
+                            500: '#a18072',
+                            600: '#8a6a5c',
+                            700: '#705246',
+                            800: '#4a352d',
+                            900: '#2c1e19',
+                            950: '#1a110e',
+                        },
+                        crema: {
+                            400: '#eab308',
+                            500: '#d97706',
+                            600: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Animations for Espresso Extraction & Steam */
+        @keyframes dripFlow {
+            0% { transform: scaleY(0.95); opacity: 0.9; }
+            50% { transform: scaleY(1.05); opacity: 1; }
+            100% { transform: scaleY(0.95); opacity: 0.9; }
+        }
+        .animate-flow {
+            animation: dripFlow 0.8s infinite ease-in-out;
+            transform-origin: top;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        .hotspot-pulse::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 9999px;
+            background-color: #d97706;
+            animation: pulseRing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            z-index: -1;
+        }
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #d97706;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #d6d3d1;
+            border-radius: 999px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #44403c;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900 dark:bg-espresso-950 dark:text-stone-100 transition-colors duration-300 antialiased selection:bg-crema-500 selection:text-white">
+
+    <!-- Top Navigation & Reading Progress -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-espresso-900/85 backdrop-blur-md border-b border-stone-200 dark:border-espresso-800">
+        <!-- Reading Progress Bar -->
+        <div class="w-full h-1 bg-stone-200 dark:bg-espresso-800">
+            <div id="reading-progress" class="h-full bg-crema-500 transition-all duration-150" style="width: 0%"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand / Book Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-crema-500 text-white flex items-center justify-center shadow-sm">
+                    <i data-lucide="coffee" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-crema-600 dark:text-crema-400 block">Interactive E-Book</span>
+                    <h1 class="font-serif font-bold text-base sm:text-lg leading-tight">The Modern Barista</h1>
+                </div>
+            </div>
+
+            <!-- Chapter Navigation (Desktop) -->
+            <nav class="hidden md:flex items-center gap-1 bg-stone-100 dark:bg-espresso-800 p-1 rounded-xl">
+                <a href="#chapter-1" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white dark:hover:bg-espresso-700 transition">01. Anatomy</a>
+                <a href="#chapter-2" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white dark:hover:bg-espresso-700 transition">02. Extraction Lab</a>
+                <a href="#chapter-3" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white dark:hover:bg-espresso-700 transition">03. Sensory & Angles</a>
+                <a href="#chapter-4" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-white dark:hover:bg-espresso-700 transition">04. Diagnostics</a>
+            </nav>
+
+            <!-- Controls: Workbench Toggle & Theme Toggle -->
+            <div class="flex items-center gap-2">
+                <button onclick="toggleWorkbench()" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-espresso-900 text-white dark:bg-crema-500 dark:text-espresso-950 text-xs sm:text-sm font-semibold shadow-sm hover:opacity-90 transition">
+                    <i data-lucide="timer" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Live Companion</span>
+                </button>
+                <button onclick="toggleTheme()" aria-label="Toggle Dark Mode" class="p-2.5 rounded-xl bg-stone-100 dark:bg-espresso-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-espresso-700 transition">
+                    <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="pt-24 pb-32 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+
+        <!-- Hero Section: Editorial Cover -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-espresso-900 via-espresso-800 to-stone-900 text-white p-8 sm:p-12 lg:p-16 shadow-xl">
+            <div class="relative z-10 max-w-2xl space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-xs font-medium text-crema-400">
+                    <span class="w-2 h-2 rounded-full bg-crema-400 animate-pulse"></span>
+                    Next-Generation Multimedia Manual • Edition 2.0
+                </div>
+                <h2 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                    From Bean to Brew: <span class="text-crema-400 italic">Tactile Coffee Craft</span>
+                </h2>
+                <p class="text-stone-300 text-base sm:text-lg leading-relaxed">
+                    Forget static diagrams and passive text. Explore exploded 3D-style hardware anatomy, test extraction physics in real-time, and train your ears with spatial acoustic cues.
+                </p>
+                <div class="flex flex-wrap items-center gap-4 pt-2">
+                    <a href="#chapter-1" class="px-6 py-3.5 rounded-xl bg-crema-500 hover:bg-crema-400 text-espresso-950 font-semibold text-sm transition shadow-lg flex items-center gap-2">
+                        Start Interactive Chapter 1
+                        <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+                    </a>
+                    <button onclick="toggleWorkbench()" class="px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm backdrop-blur-sm transition flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-4 h-4"></i>
+                        Open Brew Checklist & Timer
+                    </button>
+                </div>
+            </div>
+
+            <!-- Decorative Abstract Espresso Crema Graphic -->
+            <div class="hidden lg:block absolute -right-16 -bottom-16 w-96 h-96 rounded-full bg-gradient-to-tr from-crema-600/30 to-crema-400/10 blur-2xl pointer-events-none"></div>
+            <svg class="hidden md:block absolute right-8 bottom-8 w-64 h-64 text-white/5 pointer-events-none" viewBox="0 0 200 200" fill="currentColor">
+                <circle cx="100" cy="100" r="90" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="6 6"/>
+                <circle cx="100" cy="100" r="65" stroke="currentColor" stroke-width="1" fill="none"/>
+                <path d="M70,100 Q100,50 130,100 T70,100" fill="currentColor"/>
+            </svg>
+        </section>
+
+        <!-- CHAPTER 1: Interactive Exploded-View Anatomy -->
+        <section id="chapter-1" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-stone-200 dark:border-espresso-800 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-crema-600 dark:text-crema-400">Chapter 01 • Hardware & Mechanics</span>
+                    <h3 class="font-serif text-2xl sm:text-4xl font-bold mt-1">Interactive Portafilter & Group Head Anatomy</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="explode-btn" onclick="toggleExplodedView()" class="px-4 py-2 rounded-xl bg-stone-200 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white dark:hover:bg-crema-500 text-sm font-medium transition flex items-center gap-2">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span id="explode-label">Toggle Exploded View</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Interactive SVG Canvas -->
+                <div class="lg:col-span-7 bg-white dark:bg-espresso-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-espresso-800 shadow-sm relative min-h-[380px] flex flex-col items-center justify-center overflow-hidden">
+                    <span class="absolute top-4 left-4 text-xs font-medium text-stone-400 flex items-center gap-1.5">
+                        <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-crema-500"></i>
+                        Tap pulsing nodes to inspect components
+                    </span>
+
+                    <!-- Interactive Vector Diagram -->
+                    <svg id="anatomy-svg" class="w-full max-w-md h-auto overflow-visible" viewBox="0 0 400 320">
+                        <!-- Group Head (Top) -->
+                        <g id="part-grouphead" class="transition-transform duration-500 cursor-pointer" onclick="selectPart('grouphead')">
+                            <rect x="110" y="30" width="180" height="45" rx="8" fill="#57534e" />
+                            <rect x="125" y="75" width="150" height="12" rx="3" fill="#a8a29e" />
+                            <text x="200" y="57" text-anchor="middle" fill="#fafaf9" font-size="11" font-weight="600">9-BAR GROUP HEAD</text>
+                        </g>
+
+                        <!-- Dispersion Shower Screen -->
+                        <g id="part-screen" class="transition-transform duration-500 cursor-pointer" onclick="selectPart('screen')">
+                            <rect x="135" y="95" width="130" height="8" rx="4" fill="#d97706" />
+                            <line x1="145" y1="99" x2="255" y2="99" stroke="#fef3c7" stroke-width="2" stroke-dasharray="3 3" />
+                        </g>
+
+                        <!-- Coffee Puck -->
+                        <g id="part-puck" class="transition-transform duration-500 cursor-pointer" onclick="selectPart('puck')">
+                            <rect x="140" y="112" width="120" height="28" rx="4" fill="#4a352d" />
+                            <text x="200" y="130" text-anchor="middle" fill="#e0cec7" font-size="10" font-weight="500">18g TAMPED COFFEE PUCK</text>
+                        </g>
+
+                        <!-- Precision Filter Basket -->
+                        <g id="part-basket" class="transition-transform duration-500 cursor-pointer" onclick="selectPart('basket')">
+                            <path d="M132,148 L268,148 L260,192 Q200,200 140,192 Z" fill="none" stroke="#78716c" stroke-width="4" />
+                            <path d="M136,150 L264,150 L257,189 Q200,196 143,189 Z" fill="#a8a29e" fill-opacity="0.2" />
+                        </g>
+
+                        <!-- Bottomless Portafilter Handle & Ring -->
+                        <g id="part-portafilter" class="transition-transform duration-500 cursor-pointer" onclick="selectPart('portafilter')">
+                            <rect x="124" y="202" width="152" height="22" rx="6" fill="#292524" />
+                            <rect x="276" y="207" width="95" height="12" rx="6" fill="#7c2d12" />
+                            <text x="200" y="217" text-anchor="middle" fill="#fafaf9" font-size="10" font-weight="600">NAKED PORTAFILTER</text>
+                        </g>
+                    </svg>
+
+                    <!-- Interactive Hotspot Buttons Overlay -->
+                    <div class="flex flex-wrap justify-center gap-2 mt-4">
+                        <button onclick="selectPart('grouphead')" class="part-pill px-3 py-1.5 rounded-full text-xs font-medium bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white transition" data-part="grouphead">1. Group Head</button>
+                        <button onclick="selectPart('screen')" class="part-pill px-3 py-1.5 rounded-full text-xs font-medium bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white transition" data-part="screen">2. Shower Screen</button>
+                        <button onclick="selectPart('puck')" class="part-pill px-3 py-1.5 rounded-full text-xs font-medium bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white transition" data-part="puck">3. Coffee Puck</button>
+                        <button onclick="selectPart('basket')" class="part-pill px-3 py-1.5 rounded-full text-xs font-medium bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white transition" data-part="basket">4. Precision Basket</button>
+                        <button onclick="selectPart('portafilter')" class="part-pill px-3 py-1.5 rounded-full text-xs font-medium bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white transition" data-part="portafilter">5. Portafilter</button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Component Details Card -->
+                <div class="lg:col-span-5 bg-white dark:bg-espresso-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-espresso-800 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between">
+                        <span id="part-badge" class="px-3 py-1 rounded-full bg-crema-500/15 text-crema-600 dark:text-crema-400 text-xs font-bold uppercase tracking-wider">Component 03 of 05</span>
+                        <span id="part-metric" class="text-xs font-mono text-stone-500">Pressure: 9.0 BAR</span>
+                    </div>
+                    <h4 id="part-title" class="font-serif text-2xl font-bold">18g Tamped Coffee Puck</h4>
+                    <p id="part-desc" class="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+                        The compacted bed of finely ground coffee creates hydraulic resistance. Even distribution and level tamping (approx. 15kg force) prevent water from finding paths of least resistance ("channeling").
+                    </p>
+                    <div class="p-4 rounded-2xl bg-stone-100 dark:bg-espresso-800/80 space-y-2">
+                        <div class="flex items-center gap-2 text-xs font-semibold text-crema-600 dark:text-crema-400">
+                            <i data-lucide="wrench" class="w-4 h-4"></i>
+                            Pro Calibration Tip
+                        </div>
+                        <p id="part-tip" class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            Always purge the group head for 2 seconds before locking in the portafilter to stabilize thermal temperature and rinse stray grounds.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 2: Live Parameter Simulator (Sandbox) -->
+        <section id="chapter-2" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-stone-200 dark:border-espresso-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-crema-600 dark:text-crema-400">Chapter 02 • Interactive Physics Sandbox</span>
+                <h3 class="font-serif text-2xl sm:text-4xl font-bold mt-1">Espresso Extraction Simulator</h3>
+                <p class="text-stone-600 dark:text-stone-400 text-sm mt-2 max-w-2xl">
+                    Adjust grind fineness, water temperature, and shot duration below to observe how extraction physics alter flow rate, crema viscosity, and flavor balance in real time.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Sliders Control Panel -->
+                <div class="lg:col-span-6 bg-white dark:bg-espresso-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-espresso-800 shadow-sm space-y-6">
+                    <!-- Grind Size Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-medium">
+                            <label for="grind-slider" class="flex items-center gap-2">
+                                <i data-lucide="settings-2" class="w-4 h-4 text-crema-500"></i>
+                                Grind Size (Microns)
+                            </label>
+                            <span id="grind-val" class="font-mono font-bold text-crema-600 dark:text-crema-400">250 µm (Sweet Spot)</span>
+                        </div>
+                        <input id="grind-slider" type="range" min="150" max="400" step="10" value="250" class="w-full" oninput="updateSimulator()">
+                        <div class="flex justify-between text-[11px] text-stone-400">
+                            <span>150µm (Turkish Fine)</span>
+                            <span>250µm (Espresso)</span>
+                            <span>400µm (Coarse)</span>
+                        </div>
+                    </div>
+
+                    <!-- Temperature Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-medium">
+                            <label for="temp-slider" class="flex items-center gap-2">
+                                <i data-lucide="thermometer" class="w-4 h-4 text-crema-500"></i>
+                                Brew Temperature (°C)
+                            </label>
+                            <span id="temp-val" class="font-mono font-bold text-crema-600 dark:text-crema-400">93.0 °C</span>
+                        </div>
+                        <input id="temp-slider" type="range" min="88" max="96" step="0.5" value="93" class="w-full" oninput="updateSimulator()">
+                        <div class="flex justify-between text-[11px] text-stone-400">
+                            <span>88°C (Dark Roast)</span>
+                            <span>93°C (Medium)</span>
+                            <span>96°C (Light Roast)</span>
+                        </div>
+                    </div>
+
+                    <!-- Extraction Time Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-medium">
+                            <label for="time-slider" class="flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4 text-crema-500"></i>
+                                Shot Duration (Seconds)
+                            </label>
+                            <span id="time-val" class="font-mono font-bold text-crema-600 dark:text-crema-400">28 sec</span>
+                        </div>
+                        <input id="time-slider" type="range" min="15" max="45" step="1" value="28" class="w-full" oninput="updateSimulator()">
+                        <div class="flex justify-between text-[11px] text-stone-400">
+                            <span>15s (Ristretto / Fast)</span>
+                            <span>28s (Standard)</span>
+                            <span>45s (Lungo / Slow)</span>
+                        </div>
+                    </div>
+
+                    <!-- Preset Buttons -->
+                    <div class="pt-2 border-t border-stone-200 dark:border-espresso-800 flex flex-wrap gap-2">
+                        <span class="text-xs text-stone-400 w-full mb-1">Test Classic Scenarios:</span>
+                        <button onclick="setSimPreset(360, 89, 18)" class="px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 text-xs font-medium hover:bg-amber-500/20 transition">Under-Extracted (Sour)</button>
+                        <button onclick="setSimPreset(250, 93, 28)" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-medium hover:bg-emerald-500/20 transition">God Shot (Balanced)</button>
+                        <button onclick="setSimPreset(170, 95.5, 42)" class="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-300 text-xs font-medium hover:bg-rose-500/20 transition">Over-Extracted (Bitter)</button>
+                    </div>
+                </div>
+
+                <!-- Live Visual Output & Flavor Radar -->
+                <div class="lg:col-span-6 bg-white dark:bg-espresso-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-espresso-800 shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-stone-400">Live Simulation Output</span>
+                            <h4 id="sim-status-title" class="font-serif text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Balanced & Syrupy</h4>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-stone-400 block">Yield Output</span>
+                            <span id="sim-yield" class="font-mono text-lg font-bold">36.0g</span>
+                        </div>
+                    </div>
+
+                    <!-- Visual Cup & Extraction Stream -->
+                    <div class="relative h-48 rounded-2xl bg-stone-100 dark:bg-espresso-950 flex flex-col items-center justify-between p-4 overflow-hidden">
+                        <!-- Spout -->
+                        <div class="w-16 h-4 bg-stone-400 dark:bg-stone-600 rounded-b-lg z-10"></div>
+                        
+                        <!-- Animated Liquid Stream -->
+                        <div id="sim-stream" class="w-2.5 flex-1 bg-amber-600 animate-flow rounded-full transition-all duration-300"></div>
+
+                        <!-- Glass Espresso Cup -->
+                        <div class="relative w-28 h-20 border-2 border-stone-300 dark:border-stone-600 rounded-b-2xl overflow-hidden bg-white/40 dark:bg-white/5 backdrop-blur-xs flex flex-col justify-end">
+                            <!-- Crema Layer -->
+                            <div id="sim-crema" class="w-full h-3 bg-amber-400 transition-all duration-300"></div>
+                            <!-- Espresso Body -->
+                            <div id="sim-liquid" class="w-full h-10 bg-espresso-900 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <!-- Flavor Profile Bars -->
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1">
+                                <span>Acidity / Brightness</span>
+                                <span id="acid-pct">50%</span>
+                            </div>
+                            <div class="w-full h-2 bg-stone-200 dark:bg-espresso-800 rounded-full overflow-hidden">
+                                <div id="acid-bar" class="h-full bg-amber-400 transition-all duration-300" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1">
+                                <span>Sweetness & Body</span>
+                                <span id="sweet-pct">90%</span>
+                            </div>
+                            <div class="w-full h-2 bg-stone-200 dark:bg-espresso-800 rounded-full overflow-hidden">
+                                <div id="sweet-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-medium mb-1">
+                                <span>Bitterness / Astringency</span>
+                                <span id="bitter-pct">45%</span>
+                            </div>
+                            <div class="w-full h-2 bg-stone-200 dark:bg-espresso-800 rounded-full overflow-hidden">
+                                <div id="bitter-bar" class="h-full bg-rose-500 transition-all duration-300" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="sim-advice" class="text-xs text-stone-600 dark:text-stone-300 bg-stone-100 dark:bg-espresso-800 p-3.5 rounded-xl">
+                        Honey-like "mouse tail" flow rate. Expect notes of dark chocolate, toasted hazelnut, and bright stone fruit.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 3: Multi-Angle Loop & Spatial Audio Cues -->
+        <section id="chapter-3" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-stone-200 dark:border-espresso-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-crema-600 dark:text-crema-400">Chapter 03 • Multi-Sensory Mastery</span>
+                <h3 class="font-serif text-2xl sm:text-4xl font-bold mt-1">Milk Texturing: Camera Angles & Acoustic Cues</h3>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Interactive Multi-Angle Visual Loop -->
+                <div class="lg:col-span-7 bg-white dark:bg-espresso-900 rounded-3xl p-6 border border-stone-200 dark:border-espresso-800 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-stone-400">Camera Perspective Switcher</span>
+                        <div class="inline-flex rounded-xl bg-stone-100 dark:bg-espresso-800 p-1">
+                            <button onclick="switchAngle('top')" id="angle-top" class="angle-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-espresso-700 shadow-xs transition">Top-Down Vortex</button>
+                            <button onclick="switchAngle('macro')" id="angle-macro" class="angle-btn px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 dark:text-stone-400 transition">Macro Microfoam</button>
+                            <button onclick="switchAngle('pov')" id="angle-pov" class="angle-btn px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 dark:text-stone-400 transition">Barista POV</button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Canvas Visualization of the Selected Camera Angle -->
+                    <div class="relative rounded-2xl overflow-hidden bg-espresso-950 aspect-video flex items-center justify-center border border-stone-800">
+                        <canvas id="angle-canvas" class="w-full h-full block"></canvas>
+                        <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-black/60 backdrop-blur-md text-white px-4 py-2.5 rounded-xl text-xs">
+                            <span id="angle-caption" class="font-medium">Top-Down View: Position steam wand 1cm off-center to create a whirlpool vortex.</span>
+                            <span class="font-mono text-crema-400">60 FPS LOOP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spatial Audio & Acoustic Comparison (Synthesized with Tone.js) -->
+                <div class="lg:col-span-5 bg-white dark:bg-espresso-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-espresso-800 shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-crema-600 dark:text-crema-400">
+                            <i data-lucide="headphones" class="w-4 h-4"></i>
+                            Acoustic Ear Training (Synthesized Audio)
+                        </div>
+                        <h4 class="font-serif text-xl font-bold">Listen to the Texture</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            Experienced baristas steam milk by ear. Tap the audio cards below to hear the acoustic difference between silky microfoam and over-aerated bubbles.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Good Audio Cue -->
+                        <button onclick="playSteamSound('good')" id="btn-sound-good" class="w-full text-left p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/15 transition flex items-center justify-between group">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span class="text-sm font-bold text-emerald-700 dark:text-emerald-300">1. Silky Microfoam ("Paper Tearing")</span>
+                                </div>
+                                <p class="text-xs text-stone-500 dark:text-stone-400">Subtle, rhythmic chirps as tiny air bubbles fold into the vortex.</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                            </div>
+                        </button>
+
+                        <!-- Bad Audio Cue -->
+                        <button onclick="playSteamSound('bad')" id="btn-sound-bad" class="w-full text-left p-4 rounded-2xl border border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/15 transition flex items-center justify-between group">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span class="text-sm font-bold text-rose-700 dark:text-rose-300">2. Screaming / Big Bubbles (Error)</span>
+                                </div>
+                                <p class="text-xs text-stone-500 dark:text-stone-400">High-pitched screech (wand too deep) or loud gurgling (too shallow).</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+                                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div id="audio-visualizer-bar" class="p-3 rounded-xl bg-stone-100 dark:bg-espresso-800 text-xs text-center text-stone-500 dark:text-stone-400 font-medium">
+                        Tap either cue above to synthesize real-time steam acoustics
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 4: Interactive Diagnostic Wizard -->
+        <section id="chapter-4" class="scroll-mt-24 space-y-8">
+            <div class="border-b border-stone-200 dark:border-espresso-800 pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-crema-600 dark:text-crema-400">Chapter 04 • Troubleshooting & Diagnostics</span>
+                <h3 class="font-serif text-2xl sm:text-4xl font-bold mt-1">Interactive Shot Diagnostic Wizard</h3>
+                <p class="text-stone-600 dark:text-stone-400 text-sm mt-2">
+                    Select a symptom from your cup below. The e-book will diagnose the root cause and let you jump straight to the simulator with the corrected variables.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Symptom 1 -->
+                <div class="bg-white dark:bg-espresso-900 rounded-3xl p-6 border border-stone-200 dark:border-espresso-800 shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <span class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold">Symptom A</span>
+                        <h4 class="font-serif text-xl font-bold">"My espresso tastes sharply sour and thin."</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            <strong>Diagnosis:</strong> Under-extraction. Water passed through the coffee puck too quickly (under 20 seconds), extracting acids before sugars had time to dissolve.
+                        </p>
+                    </div>
+                    <button onclick="applyDiagnosticFix(230, 94, 30)" class="w-full py-3 px-4 rounded-xl bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white dark:hover:bg-crema-500 text-xs font-semibold transition flex items-center justify-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                        Load Fix in Simulator (Finer Grind)
+                    </button>
+                </div>
+
+                <!-- Symptom 2 -->
+                <div class="bg-white dark:bg-espresso-900 rounded-3xl p-6 border border-stone-200 dark:border-espresso-800 shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <span class="px-3 py-1 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 text-xs font-bold">Symptom B</span>
+                        <h4 class="font-serif text-xl font-bold">"It tastes hollow, dry, and ash-bitter."</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            <strong>Diagnosis:</strong> Over-extraction. The grind is too fine or water is too hot, choking the flow and pulling bitter tannins from the coffee fibers.
+                        </p>
+                    </div>
+                    <button onclick="applyDiagnosticFix(270, 91.5, 26)" class="w-full py-3 px-4 rounded-xl bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white dark:hover:bg-crema-500 text-xs font-semibold transition flex items-center justify-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                        Load Fix in Simulator (Coarser Grind)
+                    </button>
+                </div>
+
+                <!-- Symptom 3 -->
+                <div class="bg-white dark:bg-espresso-900 rounded-3xl p-6 border border-stone-200 dark:border-espresso-800 shadow-sm flex flex-col justify-between space-y-6">
+                    <div class="space-y-3">
+                        <span class="px-3 py-1 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-400 text-xs font-bold">Symptom C</span>
+                        <h4 class="font-serif text-xl font-bold">"The shot spurts sideways and tastes both sour & bitter."</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            <strong>Diagnosis:</strong> Channeling. Clumps in the coffee bed caused uneven pressure. Use a WDT distribution needle before tamping flat.
+                        </p>
+                    </div>
+                    <a href="#chapter-1" onclick="selectPart('puck')" class="w-full py-3 px-4 rounded-xl bg-stone-100 dark:bg-espresso-800 hover:bg-crema-500 hover:text-white dark:hover:bg-crema-500 text-xs font-semibold transition flex items-center justify-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                        Inspect Puck Prep in Chapter 1
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Adaptive Workbench Drawer (Timer & Interactive Checklist) -->
+    <aside id="workbench-drawer" class="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-white dark:bg-espresso-900 rounded-3xl shadow-2xl border border-stone-200 dark:border-espresso-700 overflow-hidden transition-all duration-300 translate-y-[120%] opacity-0">
+        <div class="bg-espresso-900 dark:bg-espresso-950 text-white px-5 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="timer" class="w-4 h-4 text-crema-400"></i>
+                <span class="text-xs font-bold uppercase tracking-wider">Live Barista Companion</span>
+            </div>
+            <button onclick="toggleWorkbench()" class="text-stone-400 hover:text-white p-1">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <div class="p-5 space-y-5">
+            <!-- Shot Stopwatch -->
+            <div class="bg-stone-100 dark:bg-espresso-800 rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                    <span class="text-[11px] uppercase font-semibold text-stone-400 block">Extraction Timer</span>
+                    <span id="stopwatch-display" class="font-mono text-2xl font-bold text-espresso-900 dark:text-white">00.0s</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="timer-toggle-btn" onclick="toggleTimer()" class="px-3.5 py-2 rounded-xl bg-crema-500 text-espresso-950 font-bold text-xs hover:bg-crema-400 transition">Start</button>
+                    <button onclick="resetTimer()" class="px-3 py-2 rounded-xl bg-stone-200 dark:bg-espresso-700 text-xs font-semibold hover:opacity-80 transition">Reset</button>
+                </div>
+            </div>
+
+            <!-- Interactive Real-World Checklist -->
+            <div class="space-y-2">
+                <span class="text-xs font-bold text-stone-500 dark:text-stone-400 block">Hands-On Brew Checklist</span>
+                <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-espresso-800/60 cursor-pointer text-xs">
+                    <input type="checkbox" class="w-4 h-4 accent-crema-500 rounded">
+                    <span>Purge group head & wipe basket dry</span>
+                </label>
+                <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-espresso-800/60 cursor-pointer text-xs">
+                    <input type="checkbox" class="w-4 h-4 accent-crema-500 rounded">
+                    <span>Dose 18.0g freshly ground coffee</span>
+                </label>
+                <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-espresso-800/60 cursor-pointer text-xs">
+                    <input type="checkbox" class="w-4 h-4 accent-crema-500 rounded">
+                    <span>WDT declump & tamp level (15kg)</span>
+                </label>
+                <label class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-espresso-800/60 cursor-pointer text-xs">
+                    <input type="checkbox" class="w-4 h-4 accent-crema-500 rounded">
+                    <span>Extract 36g yield in 26–30 seconds</span>
+                </label>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Custom Toast Notification (No alert() used) -->
+    <div id="toast-msg" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-espresso-900 text-white dark:bg-crema-500 dark:text-espresso-950 px-5 py-3 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300">
+        <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <span id="toast-text">Notification</span>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Reading Progress Bar Listener
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('reading-progress').style.width = scrolled + '%';
+        });
+
+        // Theme Toggle (Light / Dark Studio Mode)
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            const icon = document.getElementById('theme-icon');
+            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+            showToast(isDark ? 'Workshop Dark Mode Enabled' : 'Editorial Light Mode Enabled');
+        }
+
+        // Custom Non-blocking Toast Message
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 2600);
+        }
+
+        // ==========================================
+        // CHAPTER 1: Interactive Anatomy & Exploded View
+        // ==========================================
+        let isExploded = false;
+        const partData = {
+            grouphead: {
+                badge: 'Component 01 of 05',
+                metric: 'Pressure: 9.0 BAR • 93°C',
+                title: 'PID-Controlled Group Head',
+                desc: 'Delivers thermally stable pressurized water directly onto the coffee bed. A rotary or vibratory pump pushes water at 9 atmospheres of pressure to emulsify coffee oils into rich crema.',
+                tip: 'Always purge the group head for 2 seconds before locking in the portafilter to flush superheated water and clean the screen.'
+            },
+            screen: {
+                badge: 'Component 02 of 05',
+                metric: 'Mesh: 200 µm Precision',
+                title: 'Dispersion Shower Screen',
+                desc: 'Breaks up the single water inlet stream into hundreds of fine droplets, ensuring the entire surface area of the coffee puck is saturated evenly at the exact same millisecond.',
+                tip: 'Wipe the shower screen with a dedicated microfiber cloth immediately after every shot to prevent burnt coffee oils from building up.'
+            },
+            puck: {
+                badge: 'Component 03 of 05',
+                metric: 'Dose: 18.0g • Tamp: 15kg',
+                title: '18g Tamped Coffee Puck',
+                desc: 'The compacted bed of finely ground coffee creates hydraulic resistance. Even distribution and level tamping prevent water from finding paths of least resistance ("channeling").',
+                tip: 'Use a Weiss Distribution Technique (WDT) needle tool to break up microscopic clumps before tamping vertically.'
+            },
+            basket: {
+                badge: 'Component 04 of 05',
+                metric: 'Holes: 641 Laser-Cut',
+                title: 'Precision Ridged Filter Basket',
+                desc: 'Engineered with uniform laser-cut holes so every square millimeter of the puck extracts at an identical flow rate, maximizing sweetness and clarity.',
+                tip: 'Match your coffee dose to the basket rating (e.g., 18g dose in an 18g basket) leaving ~2mm of headspace below the shower screen.'
+            },
+            portafilter: {
+                badge: 'Component 05 of 05',
+                metric: 'Material: 304 Stainless Steel',
+                title: 'Bottomless ("Naked") Portafilter',
+                desc: 'Removes the metal spouts underneath the basket, exposing the extraction in real time. Ideal for learning because you can immediately spot channeling sprays or uneven flow.',
+                tip: 'Keep the portafilter locked into the group head while the machine warms up so the heavy steel reaches full operating temperature.'
+            }
+        };
+
+        function toggleExplodedView() {
+            isExploded = !isExploded;
+            document.getElementById('explode-label').textContent = isExploded ? 'Assemble Components' : 'Toggle Exploded View';
+            
+            document.getElementById('part-grouphead').style.transform = isExploded ? 'translateY(-18px)' : 'translateY(0)';
+            document.getElementById('part-screen').style.transform = isExploded ? 'translateY(-8px)' : 'translateY(0)';
+            document.getElementById('part-puck').style.transform = isExploded ? 'translateY(2px)' : 'translateY(0)';
+            document.getElementById('part-basket').style.transform = isExploded ? 'translateY(14px)' : 'translateY(0)';
+            document.getElementById('part-portafilter').style.transform = isExploded ? 'translateY(26px)' : 'translateY(0)';
+        }
+
+        function selectPart(key) {
+            const data = partData[key];
+            if (!data) return;
+            document.getElementById('part-badge').textContent = data.badge;
+            document.getElementById('part-metric').textContent = data.metric;
+            document.getElementById('part-title').textContent = data.title;
+            document.getElementById('part-desc').textContent = data.desc;
+            document.getElementById('part-tip').textContent = data.tip;
+
+            document.querySelectorAll('.part-pill').forEach(pill => {
+                if (pill.dataset.part === key) {
+                    pill.classList.add('bg-crema-500', 'text-white');
+                    pill.classList.remove('bg-stone-100', 'dark:bg-espresso-800');
+                } else {
+                    pill.classList.remove('bg-crema-500', 'text-white');
+                    pill.classList.add('bg-stone-100', 'dark:bg-espresso-800');
+                }
+            });
+        }
+        // Initialize default active pill
+        selectPart('puck');
+
+        // ==========================================
+        // CHAPTER 2: Live Extraction Simulator
+        // ==========================================
+        function updateSimulator() {
+            const grind = parseInt(document.getElementById('grind-slider').value);
+            const temp = parseFloat(document.getElementById('temp-slider').value);
+            const time = parseInt(document.getElementById('time-slider').value);
+
+            document.getElementById('grind-val').textContent = `${grind} µm`;
+            document.getElementById('temp-val').textContent = `${temp.toFixed(1)} °C`;
+            document.getElementById('time-val').textContent = `${time} sec`;
+
+            // Calculate simulated extraction index
+            // Ideal: grind ~250, temp ~93, time ~28
+            const grindFactor = (250 - grind) / 100; // positive = finer = higher extraction
+            const tempFactor = (temp - 93) / 4;
+            const timeFactor = (time - 28) / 15;
+            const extractionScore = grindFactor + tempFactor + timeFactor;
+
+            // Yield calculation (coarser grind + longer time = higher yield)
+            const flowRate = (grind / 250) * 1.28;
+            const yieldGrams = Math.max(15, Math.min(75, flowRate * time)).toFixed(1);
+            document.getElementById('sim-yield').textContent = `${yieldGrams}g`;
+
+            // Visual stream & cup adjustments
+            const streamEl = document.getElementById('sim-stream');
+            const cremaEl = document.getElementById('sim-crema');
+            const liquidEl = document.getElementById('sim-liquid');
+            const statusTitle = document.getElementById('sim-status-title');
+            const adviceEl = document.getElementById('sim-advice');
+
+            let acid = 50, sweet = 90, bitter = 45;
+
+            if (extractionScore < -0.45) {
+                // Under-extracted
+                statusTitle.textContent = 'Under-Extracted (Sour & Thin)';
+                statusTitle.className = 'font-serif text-2xl font-bold text-amber-500 mt-0.5';
+                streamEl.style.width = '16px';
+                streamEl.style.backgroundColor = '#f59e0b';
+                cremaEl.style.height = '4px';
+                liquidEl.style.backgroundColor = '#78350f';
+                acid = 88; sweet = 40; bitter = 20;
+                adviceEl.textContent = 'Water rushed through too quickly! Grind finer or increase shot duration to develop sweetness and body.';
+            } else if (extractionScore > 0.45) {
+                // Over-extracted
+                statusTitle.textContent = 'Over-Extracted (Bitter & Dry)';
+                statusTitle.className = 'font-serif text-2xl font-bold text-rose-500 mt-0.5';
+                streamEl.style.width = '4px';
+                streamEl.style.backgroundColor = '#451a03';
+                cremaEl.style.height = '18px';
+                liquidEl.style.backgroundColor = '#1c1917';
+                acid = 22; sweet = 45; bitter = 92;
+                adviceEl.textContent = 'Flow is choked and dark! Coarsen your grind slightly or lower brew temperature to eliminate harsh astringency.';
+            } else {
+                // Sweet spot
+                statusTitle.textContent = 'Balanced & Syrupy ("God Shot")';
+                statusTitle.className = 'font-serif text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5';
+                streamEl.style.width = '9px';
+                streamEl.style.backgroundColor = '#d97706';
+                cremaEl.style.height = '12px';
+                liquidEl.style.backgroundColor = '#2c1e19';
+                acid = 52; sweet = 94; bitter = 42;
+                adviceEl.textContent = 'Honey-like "mouse tail" flow rate. Expect rich crema, velvety mouthfeel, and balanced chocolate-caramel sweetness.';
+            }
+
+            liquidEl.style.height = `${Math.min(60, Math.max(20, yieldGrams * 1.1))}px`;
+
+            document.getElementById('acid-pct').textContent = `${acid}%`;
+            document.getElementById('acid-bar').style.width = `${acid}%`;
+            document.getElementById('sweet-pct').textContent = `${sweet}%`;
+            document.getElementById('sweet-bar').style.width = `${sweet}%`;
+            document.getElementById('bitter-pct').textContent = `${bitter}%`;
+            document.getElementById('bitter-bar').style.width = `${bitter}%`;
+        }
+
+        function setSimPreset(grind, temp, time) {
+            document.getElementById('grind-slider').value = grind;
+            document.getElementById('temp-slider').value = temp;
+            document.getElementById('time-slider').value = time;
+            updateSimulator();
+        }
+
+        function applyDiagnosticFix(grind, temp, time) {
+            setSimPreset(grind, temp, time);
+            document.getElementById('chapter-2').scrollIntoView({ behavior: 'smooth' });
+            showToast('Applied recommended fix to Extraction Simulator');
+        }
+
+        // ==========================================
+        // CHAPTER 3: Multi-Angle Canvas Animation & Tone.js Audio
+        // ==========================================
+        let currentAngle = 'top';
+        const angleCaptions = {
+            top: 'Top-Down View: Position steam wand 1cm off-center to create a continuous whirlpool vortex.',
+            macro: 'Macro View: Stretching phase incorporates microscopic air bubbles that fold seamlessly into glossy wet-paint foam.',
+            pov: 'Barista POV: Rest one hand on the pitcher base to feel when temperature hits 60°C (too hot to hold comfortably).'
+        };
+
+        function switchAngle(angle) {
+            currentAngle = angle;
+            document.getElementById('angle-caption').textContent = angleCaptions[angle];
+            document.querySelectorAll('.angle-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'dark:bg-espresso-700', 'shadow-xs', 'font-semibold');
+                btn.classList.add('text-stone-500', 'dark:text-stone-400', 'font-medium');
+            });
+            const activeBtn = document.getElementById(`angle-${angle}`);
+            activeBtn.classList.add('bg-white', 'dark:bg-espresso-700', 'shadow-xs', 'font-semibold');
+            activeBtn.classList.remove('text-stone-500', 'dark:text-stone-400', 'font-medium');
+        }
+
+        // Responsive Canvas Loop for Camera Angles
+        const canvas = document.getElementById('angle-canvas');
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function animateAngleCanvas() {
+            frame += 0.04;
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // Background studio grid
+            ctx.fillStyle = '#1a110e';
+            ctx.fillRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+
+            if (currentAngle === 'top') {
+                // Pitcher rim
+                ctx.beginPath();
+                ctx.arc(cx, cy, Math.min(w, h) * 0.34, 0, Math.PI * 2);
+                ctx.fillStyle = '#f5f5f4';
+                ctx.fill();
+                ctx.lineWidth = 8;
+                ctx.strokeStyle = '#a8a29e';
+                ctx.stroke();
+
+                // Swirling vortex rings
+                for (let i = 1; i <= 5; i++) {
+                    ctx.beginPath();
+                    const r = (Math.min(w, h) * 0.05) * i;
+                    ctx.arc(cx, cy, r, frame + i, frame + i + Math.PI * 1.3);
+                    ctx.strokeStyle = i % 2 === 0 ? '#d6d3d1' : '#e7e5e4';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+
+                // Steam wand tip off-center
+                ctx.beginPath();
+                ctx.arc(cx + 35, cy - 20, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#d97706';
+                ctx.fill();
+            } else if (currentAngle === 'macro') {
+                // Silky microfoam liquid base
+                ctx.fillStyle = '#f5f5f4';
+                ctx.fillRect(0, h * 0.25, w, h * 0.75);
+
+                // Tiny uniform micro-bubbles drifting smoothly
+                for (let i = 0; i < 35; i++) {
+                    const bx = ((i * 73 + frame * 30) % w);
+                    const by = h * 0.35 + ((i * 41) % (h * 0.55));
+                    ctx.beginPath();
+                    ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(217, 119, 6, 0.35)';
+                    ctx.fill();
+                }
+            } else {
+                // Barista POV: Angled Pitcher & Steam Wand
+                ctx.save();
+                ctx.translate(cx, cy + 20);
+                ctx.rotate(-0.22);
+                ctx.fillStyle = '#d6d3d1';
+                ctx.fillRect(-55, -60, 110, 110);
+                ctx.fillStyle = '#fafaf9';
+                ctx.fillRect(-50, -35 + Math.sin(frame) * 3, 100, 80);
+                ctx.restore();
+
+                // Steam Wand entering at 45 deg
+                ctx.beginPath();
+                ctx.moveTo(cx - 110, cy - 90);
+                ctx.lineTo(cx - 10, cy + 5);
+                ctx.strokeStyle = '#a8a29e';
+                ctx.lineWidth = 10;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(animateAngleCanvas);
+        }
+
+        // Tone.js Procedural Audio Synthesis (No external audio URLs needed)
+        async function playSteamSound(type) {
+            await Tone.start();
+            const statusBar = document.getElementById('audio-visualizer-bar');
+
+            if (type === 'good') {
+                statusBar.textContent = 'Playing: Gentle "Paper-Tearing" Microfoam Chirps (2.5 seconds)...';
+                const noise = new Tone.Noise('pink').start();
+                const filter = new Tone.Filter(1800, 'bandpass').toDestination();
+                const gain = new Tone.Gain(0.18).connect(filter);
+                noise.connect(gain);
+
+                // Rhythmic gentle chirps
+                const now = Tone.now();
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.linearRampToValueAtTime(0.22, now + 0.4);
+                gain.gain.linearRampToValueAtTime(0.06, now + 0.8);
+                gain.gain.linearRampToValueAtTime(0.20, now + 1.3);
+                gain.gain.linearRampToValueAtTime(0.02, now + 2.2);
+
+                setTimeout(() => {
+                    noise.stop();
+                    statusBar.textContent = 'Tap either cue above to synthesize real-time steam acoustics';
+                }, 2300);
+            } else {
+                statusBar.textContent = 'Playing: High-Pitched Screech & Coarse Bubbling (Warning Cue)...';
+                const osc = new Tone.Oscillator(1650, 'sawtooth').toDestination();
+                osc.volume.value = -16;
+                osc.start();
+                osc.frequency.rampTo(2200, 1.5);
+
+                setTimeout(() => {
+                    osc.stop();
+                    statusBar.textContent = 'Tap either cue above to synthesize real-time steam acoustics';
+                }, 1800);
+            }
+        }
+
+        // ==========================================
+        // FLOATING WORKBENCH DRAWER & STOPWATCH
+        // ==========================================
+        let workbenchOpen = false;
+        function toggleWorkbench() {
+            workbenchOpen = !workbenchOpen;
+            const drawer = document.getElementById('workbench-drawer');
+            if (workbenchOpen) {
+                drawer.classList.remove('translate-y-[120%]', 'opacity-0');
+                drawer.classList.add('translate-y-0', 'opacity-100');
+            } else {
+                drawer.classList.add('translate-y-[120%]', 'opacity-0');
+                drawer.classList.remove('translate-y-0', 'opacity-100');
+            }
+        }
+
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+
+        function toggleTimer() {
+            const btn = document.getElementById('timer-toggle-btn');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.textContent = 'Resume';
+            } else {
+                const startTime = Date.now() - elapsedSeconds * 1000;
+                timerInterval = setInterval(() => {
+                    elapsedSeconds = (Date.now() - startTime) / 1000;
+                    document.getElementById('stopwatch-display').textContent = elapsedSeconds.toFixed(1) + 's';
+                }, 100);
+                btn.textContent = 'Pause';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elapsedSeconds = 0;
+            document.getElementById('stopwatch-display').textContent = '00.0s';
+            document.getElementById('timer-toggle-btn').textContent = 'Start';
+        }
+
+        // Start animation loop on window load
+        window.onload = function() {
+            resizeCanvas();
+            animateAngleCanvas();
+            updateSimulator();
+        };
+    </script>
+</body>
+</html>
